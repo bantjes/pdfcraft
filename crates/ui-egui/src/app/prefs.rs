@@ -147,6 +147,7 @@ impl PdfCraftApp {
         v["organize_zoom"] = serde_json::json!(self.organize_zoom);
         // What was moved to or from the Closet and the Basement since the starting sort.
         v["closet"] = serde_json::json!(self.closet);
+        v["marian_defaults_applied"] = serde_json::Value::Bool(self.marian_defaults_applied);
         // Canonical names survive changes to the order of PAPERS and do not depend on UI language.
         v["print_paper"] = serde_json::json!(pdfcraft_engine::print::PAPERS.get(self.print_draft.paper).map(|(name, _)| *name));
         v.to_string()
@@ -187,6 +188,9 @@ impl PdfCraftApp {
                 .filter_map(|(key, shelf)| shelf.as_str().filter(|s| crate::closet::Shelf::parse(s).is_some()).map(|s| (key.clone(), s.to_owned())))
                 .take(2000)
                 .collect();
+        }
+        if let Some(applied) = v["marian_defaults_applied"].as_bool() {
+            self.marian_defaults_applied = applied;
         }
         self.restore_layout_prefs(&v);
         self.restore_behavior_prefs(&v);

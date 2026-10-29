@@ -20,6 +20,7 @@ pub mod pinned_pages;
 mod right;
 pub(super) mod search_ui;
 pub mod side_panels;
+pub mod tool_strip;
 mod tools;
 
 pub use bookmarks::BmAction;

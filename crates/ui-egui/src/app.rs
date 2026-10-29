@@ -219,6 +219,8 @@ impl PdfCraftApp {
             community_card_closed: false,
             pages_pinned: false,
             pages_column: false,
+            tool_strip: false,
+            marian_defaults_applied: false,
             closet: Default::default(),
             closet_open: false,
             closet_started: false,

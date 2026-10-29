@@ -627,6 +627,11 @@ pub struct PdfCraftApp {
     /// The Pages panel shows as the column on the left ([`panels::pinned_pages`]). Marian
     /// PDFCraft turns it on; tests and other embedders keep the Pages panel in the dock.
     pub pages_column: bool,
+    /// The Tools pane, closed, folds to a column of tool-set symbols ([`panels::tool_strip`]).
+    /// Marian PDFCraft turns it on.
+    pub tool_strip: bool,
+    /// [`PdfCraftApp::apply_marian_defaults`] has run once; saved with the settings.
+    pub(crate) marian_defaults_applied: bool,
     /// What was moved to or from the Closet and the Basement since the starting sort
     /// ([`closet`]): key → shelf name.
     pub(crate) closet: std::collections::BTreeMap<String, String>,

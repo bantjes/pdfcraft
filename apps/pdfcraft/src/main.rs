@@ -390,6 +390,8 @@ fn app_creator<'a>(
         app.closet_sorted = true;
         // Page thumbnails always on the left; two-page view keeps even pages on the left.
         app.pages_column = true;
+        // A closed Tools pane folds to its symbols.
+        app.tool_strip = true;
         app.view_defaults.cover = true;
         // The pink look is the light theme; a saved choice still wins.
         app.theme_preference = pdfcraft_ui_egui::theme::ThemePreference::Light;
@@ -402,6 +404,8 @@ fn app_creator<'a>(
         if let Some(json) = cc.storage.and_then(|s| s.get_string("pdfcraft").or_else(|| s.get_string(LEGACY_STORAGE_KEY))) {
             app.restore(&json);
         }
+        // Once, over settings carried over from PdfCraft: the Tools pane on the right.
+        app.apply_marian_defaults();
         app.window_state = pdfcraft_ui_egui::window_state::WindowState::started_with(cc.storage);
         app.integrated_titlebar = integrated;
         app.window_controls = window_controls;

@@ -381,6 +381,8 @@ pub fn show(app: &mut PdfCraftApp, ui: &mut egui::Ui) {
     if app.mode == Mode::AllTools && app.all_tools_full {
         return;
     }
+    // Marian PDFCraft: the closed Tools pane as a column of symbols, inside the rail.
+    super::tool_strip::show(app, ui);
     let open = open_panes(app);
     if open.is_empty() {
         return;

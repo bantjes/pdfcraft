@@ -37,6 +37,9 @@ fn main() -> Result<(), String> {
         app.closet_sorted = true;
         // Page thumbnails always on the left; two-page view keeps even pages on the left.
         app.pages_column = true;
+        // A closed Tools pane folds to its symbols.
+        app.tool_strip = true;
+        app.apply_marian_defaults();
         app.view_defaults.cover = true;
         app.theme_preference = pdfcraft_ui_egui::theme::ThemePreference::Light;
         if let Some(f) = &file {
