@@ -66,34 +66,49 @@ pub struct Tokens {
     pub badge_new: Color32,
     pub page_shadow: Color32,
     pub radius: u8,
+    /// Behind the tool in use (Marian PDFCraft: green, as in Emma's other apps).
+    pub current_tool: Color32,
+    /// The tool-in-use icon on [`Self::current_tool`].
+    pub on_current_tool: Color32,
 }
+
+/// Marian PDFCraft's pinks, Emma's own: the title bar, a lighter pink, and the lightest for the
+/// bars and panels.
+pub const MARIAN_PINK: Color32 = Color32::from_rgb(235, 6, 210);
+pub const MARIAN_PINK_LIGHT: Color32 = Color32::from_rgb(253, 86, 235);
+pub const MARIAN_PINK_LIGHTEST: Color32 = Color32::from_rgb(252, 206, 247);
+/// The green behind the tool in use.
+pub const MARIAN_GREEN: Color32 = Color32::from_rgb(38, 158, 72);
 
 impl Tokens {
     pub fn for_kind(kind: ThemeKind) -> Self {
         match kind {
+            // Marian Pink: the hot pink title bar, the lightest pink bars and panels.
             ThemeKind::Light => Self {
                 kind,
-                titlebar: Color32::from_rgb(0xE9, 0xE9, 0xEB),
-                chrome: Color32::from_rgb(0xFF, 0xFF, 0xFF),
-                panel: Color32::from_rgb(0xFF, 0xFF, 0xFF),
-                pasteboard: Color32::from_rgb(0xF1, 0xF1, 0xF3),
+                titlebar: MARIAN_PINK,
+                chrome: MARIAN_PINK_LIGHTEST,
+                panel: Color32::from_rgb(0xFE, 0xEC, 0xFB),
+                pasteboard: Color32::from_rgb(0xF3, 0xE8, 0xF1),
                 card: Color32::from_rgb(0xFF, 0xFF, 0xFF),
-                border: Color32::from_rgb(0xDA, 0xDA, 0xDE),
-                divider: Color32::from_rgb(0xE8, 0xE8, 0xEB),
-                text: Color32::from_rgb(0x22, 0x22, 0x26),
-                text_muted: Color32::from_rgb(0x5E, 0x5E, 0x66),
-                text_faint: Color32::from_rgb(0x6B, 0x6B, 0x73),
-                icon: Color32::from_rgb(0x44, 0x44, 0x4B),
-                hover: Color32::from_rgb(0xF0, 0xF0, 0xF3),
-                pressed: Color32::from_rgb(0xE4, 0xE4, 0xE9),
-                selected: Color32::from_rgb(0xE6, 0xEE, 0xFD),
-                accent: Color32::from_rgb(0x1B, 0x63, 0xE0),
-                accent_text: Color32::from_rgb(0x17, 0x55, 0xC4),
-                accent_soft: Color32::from_rgb(0xE3, 0xEC, 0xFD),
+                border: Color32::from_rgb(0xE6, 0xB4, 0xDE),
+                divider: Color32::from_rgb(0xF0, 0xC4, 0xE8),
+                text: Color32::from_rgb(0x22, 0x1C, 0x22),
+                text_muted: Color32::from_rgb(0x55, 0x4C, 0x55),
+                text_faint: Color32::from_rgb(0x5A, 0x52, 0x5A),
+                icon: Color32::from_rgb(0x44, 0x3A, 0x44),
+                hover: Color32::from_rgb(0xF7, 0xB8, 0xEE),
+                pressed: Color32::from_rgb(0xF2, 0xA0, 0xE8),
+                selected: MARIAN_PINK_LIGHTEST,
+                accent: MARIAN_PINK,
+                accent_text: Color32::from_rgb(0xA8, 0x00, 0x96),
+                accent_soft: Color32::from_rgb(0xFD, 0xDC, 0xF9),
                 field: Color32::from_rgb(0xFF, 0xFF, 0xFF),
-                badge_new: Color32::from_rgb(0x1B, 0x63, 0xE0),
+                badge_new: MARIAN_PINK,
                 page_shadow: Color32::from_black_alpha(34),
                 radius: 6,
+                current_tool: MARIAN_GREEN,
+                on_current_tool: Color32::WHITE,
             },
             ThemeKind::Dark => Self {
                 kind,
@@ -118,6 +133,8 @@ impl Tokens {
                 badge_new: Color32::from_rgb(0x3D, 0x7D, 0xEE),
                 page_shadow: Color32::from_black_alpha(120),
                 radius: 6,
+                current_tool: MARIAN_GREEN,
+                on_current_tool: Color32::WHITE,
             },
         }
     }
@@ -130,6 +147,37 @@ impl Tokens {
     pub fn dark(&self) -> bool {
         self.kind == ThemeKind::Dark
     }
+
+    /// The colours for controls on the title bar: in Marian Pink it is hot pink, so its icons
+    /// and inactive tab names are white. The active tab keeps the bar's lightest pink and dark text.
+    pub fn on_titlebar(self) -> Self {
+        if self.dark() {
+            return self;
+        }
+        Self {
+            icon: Color32::WHITE,
+            text_muted: Color32::WHITE,
+            text_faint: Color32::WHITE,
+            hover: Color32::from_rgb(0xD2, 0x00, 0xBC),
+            pressed: Color32::from_rgb(0xBC, 0x00, 0xA8),
+            accent_soft: MARIAN_PINK_LIGHT,
+            selected: MARIAN_PINK_LIGHT,
+            ..self
+        }
+    }
+}
+
+/// Run `add` with `tokens` in place of the theme's, so the widgets it draws read them; the
+/// theme's own tokens are back afterwards.
+pub fn scoped<R>(ctx: &egui::Context, tokens: Tokens, add: impl FnOnce() -> R) -> R {
+    let id = egui::Id::unique("pdfcraft-theme");
+    let saved = ctx.data(|d| d.get_temp::<Tokens>(id));
+    ctx.data_mut(|d| d.insert_temp(id, tokens));
+    let out = add();
+    if let Some(saved) = saved {
+        ctx.data_mut(|d| d.insert_temp(id, saved));
+    }
+    out
 }
 
 /// Hover and press amounts for chrome controls. The wash eases in; holding the pointer

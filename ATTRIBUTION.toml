@@ -2926,6 +2926,39 @@ usage = "Embedded in pdfcraft.exe by apps/pdfcraft/build.rs (Explorer, taskbar, 
 sha256 = "56daaaae9ae5389794909570885809adf5e1d9183bef2d9669ed2f9bba3ed6f5"
 
 [[asset]]
+path = "assets/app-icon/marian-pdfcraft-1024.png"
+title = "Marian PDFCraft app icon, 1024 px on Apple's icon grid"
+author = "Emma bee (design), drawn in code by packaging/marian/icon.py"
+source = "Contributor-original (packaging/marian/icon.py)"
+licence = "MIT OR Apache-2.0"
+licence_file = "assets/app-icon/LICENSE.txt"
+kind = "icon"
+usage = "Runtime window/Dock icon on macOS (apps/pdfcraft/src/main.rs)"
+sha256 = "d971ceff19588752cf63eba484aeebf7c2ebfd263287922359c53616dd2accaa"
+
+[[asset]]
+path = "assets/app-icon/marian-pdfcraft-256.png"
+title = "Marian PDFCraft app icon, 256 px full-bleed tile"
+author = "Emma bee (design), drawn in code by packaging/marian/icon.py"
+source = "Contributor-original (packaging/marian/icon.py)"
+licence = "MIT OR Apache-2.0"
+licence_file = "assets/app-icon/LICENSE.txt"
+kind = "icon"
+usage = "Runtime window icon on Windows and Linux (apps/pdfcraft/src/main.rs)"
+sha256 = "953d8e08ba1ca98d6ec4829fc8dad10e55c9ef29de52cc22489cfd75b38c7a91"
+
+[[asset]]
+path = "assets/app-icon/marian-pdfcraft.icns"
+title = "Marian PDFCraft app icon (macOS .icns)"
+author = "Emma bee (design), drawn in code by packaging/marian/icon.py"
+source = "Contributor-original (packaging/marian/icon.py)"
+licence = "MIT OR Apache-2.0"
+licence_file = "assets/app-icon/LICENSE.txt"
+kind = "icon"
+usage = "macOS app bundle icon (cargo xtask bundle)"
+sha256 = "60ec948409cc95296eebb1aca08b7d271f01cc240c8b924be08b767fd18a04c2"
+
+[[asset]]
 path = "assets/app-icon/pdfcraft-document.svg"
 title = "PdfCraft PDF document icon (master vector)"
 author = "Lucide Icons and Contributors (document outline); PdfCraft contributors (PDF badge, lettering and composition)"

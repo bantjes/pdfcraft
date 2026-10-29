@@ -58,7 +58,8 @@ impl PdfCraftApp {
             comment_prefs: Default::default(),
             theme: ThemeKind::Light,
             // A fresh install follows the desktop's appearance (#1248); saved settings override.
-            theme_preference: ThemePreference::System,
+            // Marian PDFCraft opens in its pink look, whatever the system says.
+            theme_preference: ThemePreference::Light,
             reading_colors: Default::default(),
             #[cfg(target_os = "linux")]
             desktop_theme: None,
@@ -74,7 +75,6 @@ impl PdfCraftApp {
             flatten_fill_sign_on_save: false,
             fill_text_size: fill_sign::TEXT_SIZE,
             dialog: None,
-            updates: updates::Updates::default(),
             printer_source: None,
             options_source: None,
             print_tasks: print_ui::PrintTasks::default(),
@@ -288,7 +288,6 @@ impl PdfCraftApp {
             || self.unlock_prompt.is_some()
             || self.pending_link.is_some()
             || self.pending_remote_link.is_some()
-            || self.updates.open
     }
 
     /// Show `msg` in the toast now, in place of whatever it showed. Script messages still waiting
@@ -486,7 +485,6 @@ impl eframe::App for PdfCraftApp {
                 report(dirty);
             }
         }
-        self.poll_updates();
         self.poll_print();
         // Shortcuts deferred last frame: the text field has taken that frame's typing since.
         let deferred = std::mem::take(&mut self.deferred_commands);
@@ -551,7 +549,7 @@ impl eframe::App for PdfCraftApp {
             .active
             .and_then(|i| crate::canvas::tab_label(self, i))
             .or_else(|| self.combine_showing().then(|| tl!("Combine files").to_owned()))
-            .map_or_else(|| "PdfCraft".to_owned(), |name| format!("{name} — PdfCraft"));
+            .map_or_else(|| "Marian PDFCraft".to_owned(), |name| format!("{name} — Marian PDFCraft"));
         if title != self.window_title {
             ctx.send_viewport_cmd(egui::ViewportCommand::Title(title.clone()));
             self.window_title = title;
@@ -585,7 +583,8 @@ impl eframe::App for PdfCraftApp {
         if self.draws_window_frame() {
             window_controls::resize_edges(&ctx);
         }
-        chrome::tab_strip(self, ui);
+        let on_bar = theme::Tokens::get(ui.ctx()).on_titlebar();
+        theme::scoped(&ui.ctx().clone(), on_bar, || chrome::tab_strip(self, ui));
         chrome::mode_bar(self, ui);
         // Whichever way another tab came to the front, it shows instead of the expanded view.
         if self.all_tools_full && self.all_tools_tab != self.shown_tab() {

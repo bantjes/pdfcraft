@@ -122,7 +122,6 @@ pub use platform::portable;
 #[cfg(not(target_arch = "wasm32"))]
 use platform::system_fonts;
 pub use platform::ui_scale;
-pub use platform::updates;
 pub use platform::window_controls;
 #[cfg(test)]
 use state::CopyPage;
@@ -306,8 +305,6 @@ pub struct PdfCraftApp {
     /// Point size for new Fill & Sign text and dates, kept across launches.
     pub fill_text_size: f64,
     pub dialog: Option<Dialog>,
-    /// How to ask for the latest release (the desktop app sets it; see `updates`).
-    pub(crate) updates: updates::Updates,
     /// Lists the Print dialog's printers in the background (the desktop app sets it; see
     /// [`PrinterSource`]).
     pub printer_source: Option<PrinterSource>,

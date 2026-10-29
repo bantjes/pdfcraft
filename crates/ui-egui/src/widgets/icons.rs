@@ -42,7 +42,7 @@ pub fn button(ui: &mut egui::Ui, name: &str, box_size: f32, selected: bool, tool
         normal: clear(t.icon),
         hovered: clear(t.icon),
         pressed: Some(clear(t.icon)),
-        selected: clear(t.accent_text),
+        selected: clear(t.on_current_tool),
         corner_radius: t.radius.into(),
         focus_stroke: Stroke::new(1.0, t.accent),
     };
@@ -54,7 +54,12 @@ pub fn button(ui: &mut egui::Ui, name: &str, box_size: f32, selected: bool, tool
     if let Some((rect, tint)) = painted {
         let press = theme::Press::track(ui, &resp);
         let mut shapes = Vec::with_capacity(2);
-        let fill = press.wash_color(&t, selected);
+        // The tool in use sits on green, as in Emma's other Marian apps.
+        let fill = if selected {
+            press.fill(t.current_tool, t.current_tool.gamma_multiply(0.9), t.current_tool.gamma_multiply(0.8))
+        } else {
+            press.wash_color(&t, false)
+        };
         if fill.a() > 0 {
             shapes.push(egui::Shape::rect_filled(rect, t.radius, fill));
         }
@@ -62,7 +67,7 @@ pub fn button(ui: &mut egui::Ui, name: &str, box_size: f32, selected: bool, tool
             shapes.push(egui::Shape::rect_stroke(
                 rect.shrink(0.5),
                 t.radius,
-                Stroke::new(1.0, t.accent.gamma_multiply(0.45)),
+                Stroke::new(1.0, t.current_tool.gamma_multiply(0.45)),
                 egui::StrokeKind::Inside,
             ));
         }

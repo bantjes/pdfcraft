@@ -3,6 +3,7 @@
 use std::process::ExitCode;
 
 mod assets;
+mod bundle;
 mod corpus;
 mod demo_pdf;
 mod fuzz;
@@ -46,6 +47,7 @@ const COMMANDS: &[(&str, &str, Command)] = &[
     ),
     ("screenshots", "Regenerate the README screenshots in docs/images/ and their ATTRIBUTION entries", screenshots::run),
     ("models", "Fetch the OCR models (ATTRIBUTION.toml kind = \"model\") into assets/models/, verified by SHA-256", assets::models),
+    ("bundle", "Build the release app as dist/Marian PDFCraft.app (macOS)", bundle::run),
     ("demo-pdf", "Build dist/demo/pdfcraft-showcase.pdf (needs Google Chrome or Chromium)", demo_pdf::run),
 ];
 

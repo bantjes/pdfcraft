@@ -164,7 +164,7 @@ impl RecoveryStore {
     }
 
     /// `Recovery` in the portable data folder in portable mode ([`crate::portable`]), otherwise
-    /// the platform's per-user data folder: `~/Library/Application Support/PdfCraft/Recovery`
+    /// the platform's per-user data folder: `~/Library/Application Support/Marian PDFCraft/Recovery`
     /// (macOS), `%LOCALAPPDATA%\PdfCraft\Recovery` (Windows), or
     /// `$XDG_DATA_HOME/pdfcraft/recovery` / `~/.local/share/pdfcraft/recovery` (others).
     pub fn default_dir() -> Option<PathBuf> {
@@ -173,7 +173,7 @@ impl RecoveryStore {
         }
         let env = |k: &str| std::env::var_os(k).filter(|v| !v.is_empty()).map(PathBuf::from);
         if cfg!(target_os = "macos") {
-            env("HOME").map(|h| h.join("Library/Application Support/PdfCraft/Recovery"))
+            env("HOME").map(|h| h.join("Library/Application Support/Marian PDFCraft/Recovery"))
         } else if cfg!(windows) {
             env("LOCALAPPDATA").map(|d| d.join("PdfCraft").join("Recovery"))
         } else {
