@@ -337,7 +337,15 @@ impl DocView {
                     let sizes: Vec<Vec2> = pair.iter().map(page_size).collect();
                     let row_w: f32 = sizes.iter().map(|v| v.x).sum::<f32>() + gap * (sizes.len() as f32 - 1.0);
                     let row_h = sizes.iter().map(|v| v.y).fold(0.0, f32::max);
-                    let mut x = if self.cover && ri == 0 { (content_w / 2.0 + gap / 2.0).max(SIDE) } else { ((content_w - row_w) / 2.0).max(SIDE) };
+                    // With a cover page, a page alone at the end is an even page: on the left.
+                    let alone_at_end = self.cover && ri > 0 && sizes.len() == 1;
+                    let mut x = if self.cover && ri == 0 {
+                        (content_w / 2.0 + gap / 2.0).max(SIDE)
+                    } else if alone_at_end {
+                        (content_w / 2.0 - gap / 2.0 - row_w).max(SIDE)
+                    } else {
+                        ((content_w - row_w) / 2.0).max(SIDE)
+                    };
                     for size in sizes {
                         rects.push(Rect::from_min_size(pos2(x, y + (row_h - size.y) / 2.0), size));
                         x += size.x + gap;

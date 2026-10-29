@@ -555,7 +555,6 @@ pub fn right_rail(app: &mut PdfCraftApp, ui: &mut egui::Ui) {
     let mut items = vec![
         item(RightPanel::Comments, "message-square-text", "Comments", has(has_comments, "Has comments")),
         item(RightPanel::Bookmarks, "bookmark", "Bookmarks", has(has_outline, "Has bookmarks")),
-        item(RightPanel::Pages, "files", "Page thumbnails", None),
         item(RightPanel::Fields, "text-cursor-input", "Form fields", has(has_fields, "Has form fields")),
         item(RightPanel::Layers, "layers", "Layers", has(has_layers, "Has layers")),
         item(RightPanel::Attachments, "paperclip", "Attachments", has(has_files, "Has attachments")),
@@ -733,10 +732,7 @@ fn page_display_menu(ui: &mut egui::Ui, view: &DocView) -> Option<&'static str> 
     if ui.add(widgets::checkbox(&mut gaps, tl!("Show gaps between pages"))).changed() {
         picked = Some("view.page_gaps");
     }
-    let mut cover = view.cover;
-    if ui.add_enabled(view.cover_applies(), widgets::checkbox(&mut cover, tl!("Show cover page in two-page view"))).changed() {
-        picked = Some("view.layout.cover");
-    }
+    // Marian PDFCraft: no cover page switch; two-page view always puts even pages on the left.
     if picked.is_some() {
         ui.close();
     }

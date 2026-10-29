@@ -68,7 +68,6 @@ const EXTRA: &[(&str, &str, Option<Shortcut>)] = &[
 const PANELS: &[(RightPanel, &str, &str)] = &[
     (RightPanel::Comments, "comments", "Comments"),
     (RightPanel::Bookmarks, "bookmarks", "Bookmarks"),
-    (RightPanel::Pages, "pages", "Pages"),
     (RightPanel::Fields, "fields", "Fields"),
     (RightPanel::Layers, "layers", "Layers"),
     (RightPanel::Attachments, "attachments", "Attachments"),
@@ -156,17 +155,8 @@ const EDIT: &[&str] = &[
 ];
 const ZOOM: &[&str] = &[ACTUAL_SIZE, PAGE_LEVEL, FIT_WIDTH, FIT_HEIGHT, "view.fit_visible", SEP, ZOOM_IN, ZOOM_OUT, SEP, "view.marquee_zoom"];
 const NAVIGATION: &[&str] = &["view.focus_page_input", SEP, "view.previous_view", "view.next_view"];
-const DISPLAY: &[&str] = &[
-    "view.layout.single",
-    "view.layout.two_up",
-    SEP,
-    "view.continuous",
-    "view.page_gaps",
-    "view.layout.cover",
-    SEP,
-    "view.fit_width_scrolling",
-    "view.fit_one_page",
-];
+const DISPLAY: &[&str] =
+    &["view.layout.single", "view.layout.two_up", SEP, "view.continuous", "view.page_gaps", SEP, "view.fit_width_scrolling", "view.fit_one_page"];
 const THEMES: &[&str] = &["view.theme.system", "view.theme.light", "view.theme.dark"];
 const PANES: &[&str] = &["view.side_panel", "view.tools_pane"];
 const PANE_COMMANDS: &[&str] = &["comment.list", "form.fields", "ui.dock.reset"];

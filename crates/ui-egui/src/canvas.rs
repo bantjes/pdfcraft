@@ -617,7 +617,9 @@ impl DocView {
             disk_changed: false,
             close_requested: false,
             snapshot: None,
-            cover: false,
+            // Marian PDFCraft: two-page view always starts with page 1 alone on the right, so even
+            // pages are on the left and odd pages on the right.
+            cover: true,
             back: Vec::new(),
             forward: Vec::new(),
             goto: None,

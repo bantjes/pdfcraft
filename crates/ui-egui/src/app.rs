@@ -218,6 +218,7 @@ impl PdfCraftApp {
             bookmark_rename: None,
             last_opened_url: None,
             community_card_closed: false,
+            pages_pinned: false,
             pending_link: None,
             pending_full_screen: None,
             pending_remote_link: None,
@@ -590,6 +591,7 @@ impl eframe::App for PdfCraftApp {
         if self.all_tools_full && self.all_tools_tab != self.shown_tab() {
             self.all_tools_full = false;
         }
+        crate::panels::pinned_pages::show(self, ui);
         side_panels::show(self, ui);
         let t = theme::Tokens::get(&ctx);
         egui::CentralPanel::default().frame(egui::Frame::NONE.fill(t.pasteboard)).show(ui, |ui| {

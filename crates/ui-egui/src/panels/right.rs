@@ -26,6 +26,7 @@ pub fn right_panel(app: &mut PdfCraftApp, ui: &mut egui::Ui) {
     let bm_editable = app.session.get(id).is_some_and(|d| d.allows_assembly() && d.read_only_reason.is_none());
     // Prepare a form is open: the Fields panel orders tabs.
     let preparing = app.is_preparing();
+    let pinned = app.pages_pinned;
     {
         let Some(doc) = app.session.get(id) else { return };
         let info = &doc.info;
@@ -78,7 +79,7 @@ pub fn right_panel(app: &mut PdfCraftApp, ui: &mut egui::Ui) {
                         ui.label(egui::RichText::new(picked).font(theme::medium(12.0)).color(t.accent_text));
                     }
                     ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
-                        if icons::button(ui, "x", 26.0, false, tl!("Close")).clicked() {
+                        if !pinned && icons::button(ui, "x", 26.0, false, tl!("Close")).clicked() {
                             close = true;
                         }
                         if panel == RightPanel::Pages
