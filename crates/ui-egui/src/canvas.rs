@@ -191,12 +191,15 @@ pub struct ViewDefaults {
     /// Highlight existing fields: a preference in Acrobat, so it carries over to the next
     /// document and the next session. On for new settings; a stored choice wins.
     pub highlight_fields: bool,
+    /// Two-page view starts with page 1 alone on the right, so even pages are on the left and
+    /// odd pages on the right. Marian PDFCraft turns it on.
+    pub cover: bool,
 }
 
 impl Default for ViewDefaults {
     fn default() -> Self {
         // Single page, scrolling continuously at fit width: the earlier "continuous" default.
-        Self { layout: PageLayout::Single, continuous: true, show_page_gaps: true, fit: Fit::Width, zoom: 1.0, highlight_fields: true }
+        Self { layout: PageLayout::Single, continuous: true, show_page_gaps: true, fit: Fit::Width, zoom: 1.0, highlight_fields: true, cover: false }
     }
 }
 
@@ -617,9 +620,7 @@ impl DocView {
             disk_changed: false,
             close_requested: false,
             snapshot: None,
-            // Marian PDFCraft: two-page view always starts with page 1 alone on the right, so even
-            // pages are on the left and odd pages on the right.
-            cover: true,
+            cover: defaults.cover,
             back: Vec::new(),
             forward: Vec::new(),
             goto: None,

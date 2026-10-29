@@ -73,6 +73,20 @@ impl PdfCraftApp {
                 let g = pdfcraft_engine::catalog::group(value).ok_or_else(|| format!("unknown tool {value}"))?;
                 self.select_tool(g.id);
             }
+            // `closet=group:scan=inUse`, `closet=reset` or `closet=reset-all`.
+            ("closet", _) => {
+                let (id, params) = match value {
+                    "reset" => ("closet.reset", serde_json::json!({ "all": false })),
+                    "reset-all" => ("closet.reset", serde_json::json!({ "all": true })),
+                    _ => {
+                        let (key, shelf) = value.rsplit_once('=').ok_or("closet takes key=shelf, reset or reset-all")?;
+                        ("closet.set", serde_json::json!({ "key": key, "shelf": shelf }))
+                    }
+                };
+                if let Some(result) = self.closet_command(id, &params) {
+                    result?;
+                }
+            }
             ("left", _) => self.left_open = value != "closed",
             ("home", _) => {
                 self.active = None;

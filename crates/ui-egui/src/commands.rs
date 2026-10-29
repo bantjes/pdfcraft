@@ -274,6 +274,7 @@ impl PdfCraftApp {
                 }
             }
             "view.palette" => self.palette_open = !self.palette_open,
+            "window.closet" => self.closet_open = !self.closet_open,
             layout if crate::canvas::PageLayout::from_command(layout).is_some() => {
                 if let (Some(i), Some(layout)) = (active, crate::canvas::PageLayout::from_command(layout)) {
                     self.views[i].set_layout(layout);

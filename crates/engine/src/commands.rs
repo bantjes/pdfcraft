@@ -395,6 +395,7 @@ pub const COMMANDS: &[CommandSpec] = &[
     c("page.split", "Split document…", PAGES, None, Assembly, "scissors"),
     c("page.number", "Number pages…", PAGES, None, Assembly, "hash"),
     c("page.properties", "Page properties…", PAGES, None, Modification, "info"),
+    c("window.closet", "Closet…", None, None, Nothing, "eye-off"),
     c("help.shortcuts", "Keyboard shortcuts", HELP, None, Nothing, "circle-help"),
     c("help.about", "About Marian PDFCraft", HELP, None, Nothing, "info"),
 ];

@@ -12,6 +12,9 @@ pub const MAX_WIDTH: f32 = 480.0;
 
 /// Draws the Pages column at the left edge. Call before the side panels and the central panel.
 pub fn show(app: &mut PdfCraftApp, ui: &mut egui::Ui) {
+    if !app.pages_column {
+        return;
+    }
     if app.right == Some(RightPanel::Pages) {
         app.right = None;
     }

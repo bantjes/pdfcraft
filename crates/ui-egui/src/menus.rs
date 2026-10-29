@@ -65,7 +65,7 @@ const EXTRA: &[(&str, &str, Option<Shortcut>)] = &[
 ];
 
 /// View ▸ Side panels: the panel, its id in [`PANEL`] commands and its English label.
-const PANELS: &[(RightPanel, &str, &str)] = &[
+pub(crate) const PANELS: &[(RightPanel, &str, &str)] = &[
     (RightPanel::Comments, "comments", "Comments"),
     (RightPanel::Bookmarks, "bookmarks", "Bookmarks"),
     (RightPanel::Fields, "fields", "Fields"),
@@ -212,8 +212,27 @@ const SIGN: &[&str] = &[
     "sign.validate",
     "sign.panel",
 ];
-const WINDOW: &[&str] = &["view.next_tab", "view.previous_tab"];
+const WINDOW: &[&str] = &["view.next_tab", "view.previous_tab", SEP, "window.closet"];
 const HELP: &[&str] = &["help.shortcuts", SEP, "help.about"];
+
+/// The menu lists whose items can be put away in the Closet, with their place in the menus.
+pub(crate) const MENU_LISTS: &[(&str, &[&str])] = &[
+    ("File", FILE),
+    ("File ▸ Create", CREATE),
+    ("File ▸ Export", EXPORT),
+    ("File ▸ Protect", PROTECT),
+    ("Edit", EDIT),
+    ("Edit ▸ Pages", PAGES),
+    ("View ▸ Zoom", ZOOM),
+    ("View ▸ Page navigation", NAVIGATION),
+    ("View ▸ Page display", DISPLAY),
+    ("View", PANES),
+    ("View", PANE_COMMANDS),
+    ("View", MODES),
+    ("Sign", SIGN),
+    ("Window", WINDOW),
+    ("Help", HELP),
+];
 
 /// A registry shortcut as a craft-keymap chord: `command` is ⌘ (Ctrl elsewhere) and `mac_ctrl`
 /// the Control key on macOS. `None` for a key craft-keymap doesn't name.
@@ -320,7 +339,7 @@ impl PdfCraftApp {
                 .collect(),
         )];
         sign.extend(list(SIGN, &mut used));
-        let window = list(WINDOW, &mut used);
+        let window = craft_menu::tidy(list(WINDOW, &mut used));
         let help = list(HELP, &mut used);
         let mut view = vec![
             Node::submenu(tl!("Zoom"), list(ZOOM, &mut used)),
@@ -357,6 +376,8 @@ impl PdfCraftApp {
             ],
             documents: self.menu_documents(),
         };
+        // What is put away in the Closet or the Basement leaves the menus.
+        self.prune_menus(&mut bar);
         bar.tag_item(&CommandRef::new("help.about"), ItemRole::About);
         bar.tag_item(&CommandRef::new("app.preferences"), ItemRole::Settings);
         craft_menu::apply_state(&mut bar, |command| self.menu_state(ctx, command));
@@ -490,6 +511,7 @@ impl PdfCraftApp {
             "view.theme.light" => Some(self.theme_preference == ThemePreference::Light),
             "view.theme.dark" => Some(self.theme_preference == ThemePreference::Dark),
             PANEL => Some(panel(command).is_some_and(|p| self.right == Some(p))),
+            "window.closet" => Some(self.closet_open),
             _ => None,
         };
         ItemState { enabled, checked }
@@ -618,7 +640,7 @@ fn param_index(command: &CommandRef) -> Option<usize> {
 }
 
 /// The side panel a [`PANEL`] command names.
-fn panel(command: &CommandRef) -> Option<RightPanel> {
+pub(crate) fn panel(command: &CommandRef) -> Option<RightPanel> {
     let name = command.params.get("panel").and_then(serde_json::Value::as_str)?;
     PANELS.iter().find(|(_, n, _)| *n == name).map(|(p, ..)| *p)
 }

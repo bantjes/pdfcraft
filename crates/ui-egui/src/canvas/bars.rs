@@ -299,7 +299,13 @@ pub(super) fn quick_bar(app: &mut PdfCraftApp, area: Rect, ui: &mut egui::Ui) {
                     // Comment ▸, Highlight ▸, Draw ▸ (Acrobat's comment toolbar groups). Clicking a
                     // group selects its last-used tool; clicking it again opens the flyout.
                     for g in 0..comments::GROUPS.len() {
-                        let current = app.comment_prefs.group_tool[g];
+                        // Markup tools in the Closet or the Basement leave the flyout; a group
+                        // with none left goes too.
+                        let in_use = app.markup_tools_in_use(g);
+                        let remembered = app.comment_prefs.group_tool[g];
+                        let Some(current) = in_use.contains(&remembered).then_some(remembered).or_else(|| in_use.first().copied()) else {
+                            continue;
+                        };
                         let active = matches!(app.quick_tool, QuickTool::Comment(t) if t.group() == g);
                         let resp = icons::button(ui, current.icon(), 32.0, active, tl!(current.label()));
                         // A small corner triangle marks the flyout.
@@ -315,7 +321,7 @@ pub(super) fn quick_bar(app: &mut PdfCraftApp, area: Rect, ui: &mut egui::Ui) {
                             .align(egui::RectAlign::RIGHT_START)
                             .gap(6.0)
                             .show(|ui| {
-                                for tool in comments::GROUPS[g] {
+                                for tool in &in_use {
                                     let on = app.quick_tool == QuickTool::Comment(*tool);
                                     let (row, click) = ui.allocate_exact_size(vec2(180.0, 28.0), Sense::click());
                                     let press = theme::Press::track(ui, &click);

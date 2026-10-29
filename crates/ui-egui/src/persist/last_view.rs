@@ -116,6 +116,9 @@ impl PdfCraftApp {
             view.set_display(layout, continuous);
         }
         // Marian PDFCraft keeps the cover page on (even pages left), whatever was saved.
+        if !self.view_defaults.cover {
+            view.set_cover(last.cover);
+        }
         if let Some(defaults) = ViewDefaults::default().with_zoom(&last.zoom) {
             match defaults.fit {
                 canvas::Fit::None => view.set_zoom(defaults.zoom),

@@ -33,6 +33,12 @@ fn main() -> Result<(), String> {
     }
     let mut harness = Harness::builder().with_size(size).with_pixels_per_point(scale).build_eframe(move |_cc| {
         let mut app = PdfCraftApp::new();
+        // As Marian PDFCraft starts: Emma's Closet and Basement sort.
+        app.closet_sorted = true;
+        // Page thumbnails always on the left; two-page view keeps even pages on the left.
+        app.pages_column = true;
+        app.view_defaults.cover = true;
+        app.theme_preference = pdfcraft_ui_egui::theme::ThemePreference::Light;
         if let Some(f) = &file {
             let bytes = std::fs::read(f).unwrap_or_default();
             let name = std::path::Path::new(f).file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default();

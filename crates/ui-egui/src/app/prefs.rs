@@ -145,6 +145,8 @@ impl PdfCraftApp {
         v["comment_tool_pinned"] = serde_json::Value::Bool(self.comment_prefs.pinned);
         v["show_secured_notice"] = serde_json::Value::Bool(self.show_secured_notice);
         v["organize_zoom"] = serde_json::json!(self.organize_zoom);
+        // What was moved to or from the Closet and the Basement since the starting sort.
+        v["closet"] = serde_json::json!(self.closet);
         // Canonical names survive changes to the order of PAPERS and do not depend on UI language.
         v["print_paper"] = serde_json::json!(pdfcraft_engine::print::PAPERS.get(self.print_draft.paper).map(|(name, _)| *name));
         v.to_string()
@@ -177,6 +179,14 @@ impl PdfCraftApp {
             #[cfg(not(target_arch = "wasm32"))]
             let r: Vec<RecentFile> = r.into_iter().filter(|f| std::path::Path::new(&f.path).exists()).collect();
             self.recent = r;
+        }
+        if let Some(closet) = v["closet"].as_object() {
+            // Settings are untrusted: only known shelves, and no more entries than there are things.
+            self.closet = closet
+                .iter()
+                .filter_map(|(key, shelf)| shelf.as_str().filter(|s| crate::closet::Shelf::parse(s).is_some()).map(|s| (key.clone(), s.to_owned())))
+                .take(2000)
+                .collect();
         }
         self.restore_layout_prefs(&v);
         self.restore_behavior_prefs(&v);

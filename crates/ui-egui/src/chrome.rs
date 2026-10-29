@@ -490,7 +490,16 @@ pub fn mode_bar(app: &mut PdfCraftApp, ui: &mut egui::Ui) {
                 }
                 // Acrobat's mode bar has no Read tab: reading is what the viewer does with no tool
                 // in use. Read mode (the panes hidden) stays a View command and a default workspace.
-                for (mode, label) in [(Mode::AllTools, "All tools"), (Mode::Edit, "Edit"), (Mode::Convert, "Convert"), (Mode::Sign, "E-Sign")] {
+                for (mode, label, group) in [
+                    (Mode::AllTools, "All tools", None),
+                    (Mode::Edit, "Edit", Some("edit")),
+                    (Mode::Convert, "Convert", Some("export")),
+                    (Mode::Sign, "E-Sign", Some("fill_sign")),
+                ] {
+                    // A tab whose tool set is in the Closet or the Basement goes with it.
+                    if group.is_some_and(|g| app.group_put_away(g)) && app.mode != mode {
+                        continue;
+                    }
                     if widgets::mode_tab(ui, tl!(label), app.mode == mode).clicked() {
                         app.switch_mode(mode, true);
                     }
@@ -552,18 +561,28 @@ pub fn right_rail(app: &mut PdfCraftApp, ui: &mut egui::Ui) {
         }
     };
     let has = |has: bool, label: &'static str| has.then_some(label);
-    let mut items = vec![
-        item(RightPanel::Comments, "message-square-text", "Comments", has(has_comments, "Has comments")),
-        item(RightPanel::Bookmarks, "bookmark", "Bookmarks", has(has_outline, "Has bookmarks")),
-        item(RightPanel::Fields, "text-cursor-input", "Form fields", has(has_fields, "Has form fields")),
-        item(RightPanel::Layers, "layers", "Layers", has(has_layers, "Has layers")),
-        item(RightPanel::Attachments, "paperclip", "Attachments", has(has_files, "Has attachments")),
-        item(RightPanel::Signatures, "signature", "Signatures", has(has_signatures, "Signed")),
+    let mut entries = vec![
+        (RightPanel::Comments, "message-square-text", "Comments", has(has_comments, "Has comments")),
+        (RightPanel::Bookmarks, "bookmark", "Bookmarks", has(has_outline, "Has bookmarks")),
+        (RightPanel::Fields, "text-cursor-input", "Form fields", has(has_fields, "Has form fields")),
+        (RightPanel::Layers, "layers", "Layers", has(has_layers, "Has layers")),
+        (RightPanel::Attachments, "paperclip", "Attachments", has(has_files, "Has attachments")),
+        (RightPanel::Signatures, "signature", "Signatures", has(has_signatures, "Signed")),
     ];
-    if has_check {
-        items.push(item(RightPanel::Accessibility, "accessibility", "Accessibility Checker", None));
+    // The Pages panel lives here unless it is the column on the left.
+    if !app.pages_column {
+        entries.insert(2, (RightPanel::Pages, "files", "Page thumbnails", None));
     }
-    items.push(item(RightPanel::Tags, "tag", "Tags", None));
+    if has_check {
+        entries.push((RightPanel::Accessibility, "accessibility", "Accessibility Checker", None));
+    }
+    entries.push((RightPanel::Tags, "tag", "Tags", None));
+    // Side panels in the Closet or the Basement leave the strip.
+    let items: Vec<_> = entries
+        .into_iter()
+        .filter(|(panel, ..)| !app.panel_put_away(*panel))
+        .map(|(panel, icon, label, marker)| item(panel, icon, label, marker))
+        .collect();
     let view = &mut app.views[index];
     let mut page_display = None;
     let rail = Rail::new(egui::Id::unique("rail"))

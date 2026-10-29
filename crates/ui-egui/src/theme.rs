@@ -162,19 +162,25 @@ impl Tokens {
             pressed: Color32::from_rgb(0xBC, 0x00, 0xA8),
             accent_soft: MARIAN_PINK_LIGHT,
             selected: MARIAN_PINK_LIGHT,
+            // Marks drawn on the pink bar (a dragged tab's drop line) show in white.
+            accent: Color32::WHITE,
             ..self
         }
     }
 }
 
 /// Run `add` with `tokens` in place of the theme's, so the widgets it draws read them; the
-/// theme's own tokens are back afterwards.
+/// theme's own tokens are back afterwards, unless `add` switched the theme (the title bar's
+/// theme button), whose new tokens then stay.
 pub fn scoped<R>(ctx: &egui::Context, tokens: Tokens, add: impl FnOnce() -> R) -> R {
     let id = egui::Id::unique("pdfcraft-theme");
     let saved = ctx.data(|d| d.get_temp::<Tokens>(id));
     ctx.data_mut(|d| d.insert_temp(id, tokens));
     let out = add();
-    if let Some(saved) = saved {
+    let switched = ctx.data(|d| d.get_temp::<Tokens>(id)).is_some_and(|now| now.kind != tokens.kind || now.panel != tokens.panel);
+    if let Some(saved) = saved
+        && !switched
+    {
         ctx.data_mut(|d| d.insert_temp(id, saved));
     }
     out

@@ -9,7 +9,8 @@ use crate::{PdfCraftApp, icons, panels::human_size, widgets};
 
 pub mod folders_ui;
 
-const RECOMMENDED: [&str; 5] = ["organize", "comment", "form", "edit", "protect"];
+/// Emma's tools first; any put away in the Closet or the Basement are left out.
+const RECOMMENDED: [&str; 6] = ["organize", "combine", "comment", "fill_sign", "form", "redact"];
 
 /// A soft shadow that rises on hover and settles when the card is pressed.
 pub(crate) fn card_lift(ui: &egui::Ui, t: &Tokens, rect: Rect, press: theme::Press) {
@@ -44,6 +45,9 @@ pub fn show(app: &mut PdfCraftApp, ui: &mut egui::Ui) {
                     ui.horizontal_wrapped(|ui| {
                         ui.spacing_mut().item_spacing = vec2(14.0, 14.0);
                         for id in RECOMMENDED {
+                            if app.group_put_away(id) {
+                                continue;
+                            }
                             let Some(g) = catalog::group(id) else { continue };
                             let (rect, resp) = ui.allocate_exact_size(vec2(190.0, 104.0), Sense::click());
                             resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, tl!(g.label)));

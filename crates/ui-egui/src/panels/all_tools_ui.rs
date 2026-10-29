@@ -77,8 +77,14 @@ pub fn show(app: &mut PdfCraftApp, ui: &mut egui::Ui) {
                 ui.set_width(ui.available_width());
                 let mut any = false;
                 for category in TOOL_CATEGORIES {
-                    let found: Vec<_> =
-                        category.groups.iter().filter_map(|id| catalog::group(id)).filter_map(|g| matches(&query, g).map(|m| (g, m))).collect();
+                    let found: Vec<_> = category
+                        .groups
+                        .iter()
+                        // A tool set in the Closet or the Basement shows only when searched for.
+                        .filter(|id| !query.is_empty() || !app.group_put_away(id))
+                        .filter_map(|id| catalog::group(id))
+                        .filter_map(|g| matches(&query, g).map(|m| (g, m)))
+                        .collect();
                     if found.is_empty() {
                         continue;
                     }

@@ -58,8 +58,7 @@ impl PdfCraftApp {
             comment_prefs: Default::default(),
             theme: ThemeKind::Light,
             // A fresh install follows the desktop's appearance (#1248); saved settings override.
-            // Marian PDFCraft opens in its pink look, whatever the system says.
-            theme_preference: ThemePreference::Light,
+            theme_preference: ThemePreference::System,
             reading_colors: Default::default(),
             #[cfg(target_os = "linux")]
             desktop_theme: None,
@@ -219,6 +218,11 @@ impl PdfCraftApp {
             last_opened_url: None,
             community_card_closed: false,
             pages_pinned: false,
+            pages_column: false,
+            closet: Default::default(),
+            closet_open: false,
+            closet_started: false,
+            closet_sorted: false,
             pending_link: None,
             pending_full_screen: None,
             pending_remote_link: None,
@@ -610,6 +614,7 @@ impl eframe::App for PdfCraftApp {
         });
         self.process_pending_edits();
         palette::show(self, &ctx);
+        crate::closet::window(self, &ctx);
         dialogs::show(self, &ctx);
         self.show_progress(&ctx);
         widgets::toast(self, &ctx);

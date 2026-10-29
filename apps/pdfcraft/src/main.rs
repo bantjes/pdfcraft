@@ -386,6 +386,13 @@ fn app_creator<'a>(
     Box::new(move |cc| {
         started.set(true);
         let mut app = PdfCraftApp::new();
+        // Marian PDFCraft's Closet and Basement start with Emma's sort.
+        app.closet_sorted = true;
+        // Page thumbnails always on the left; two-page view keeps even pages on the left.
+        app.pages_column = true;
+        app.view_defaults.cover = true;
+        // The pink look is the light theme; a saved choice still wins.
+        app.theme_preference = pdfcraft_ui_egui::theme::ThemePreference::Light;
         // First start (or settings from before Units existed): the region's unit.
         app.units = pdfcraft_ui_egui::units::Unit::system();
         #[cfg(target_os = "linux")]

@@ -27,6 +27,7 @@ macro_rules! tl_ctx {
 }
 pub mod canvas;
 mod chrome;
+mod closet;
 pub use combine_grid::ThumbState as CombineThumb;
 pub use combine_ui::{Columns as CombineColumns, CombineView, Lock as CombineLock, SortKey};
 mod commands;
@@ -623,6 +624,19 @@ pub struct PdfCraftApp {
     /// The Pages panel is being drawn as the always-open column on the left
     /// ([`panels::pinned_pages`]), so it has no Close button.
     pub(crate) pages_pinned: bool,
+    /// The Pages panel shows as the column on the left ([`panels::pinned_pages`]). Marian
+    /// PDFCraft turns it on; tests and other embedders keep the Pages panel in the dock.
+    pub pages_column: bool,
+    /// What was moved to or from the Closet and the Basement since the starting sort
+    /// ([`closet`]): key → shelf name.
+    pub(crate) closet: std::collections::BTreeMap<String, String>,
+    /// The Closet window is open (Window ▸ Closet…).
+    pub(crate) closet_open: bool,
+    /// The first frame's tidy-up after the sort has run.
+    pub(crate) closet_started: bool,
+    /// The starting sort ([`closet::SHIPPED`]) applies. The app turns it on; tests and other
+    /// embedders start with everything in use.
+    pub closet_sorted: bool,
     /// A document asked to open this address; the user hasn't answered yet (#90, #91).
     pub pending_link: Option<PendingLink>,
     /// A document just opened asks to be shown in Full Screen mode (`/PageMode /FullScreen`):
